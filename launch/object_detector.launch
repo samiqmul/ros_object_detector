@@ -1,0 +1,19 @@
+<launch>
+  <arg name="input_cloud" default="/camera/depth/points" />
+
+  <arg name="object_size" default="0.3" />
+  <arg name="plane_normal" default="0" />
+  <arg name="use_plane_normal" default="false" />
+
+  <group>
+    <node pkg="object_detector" name="find_object" type="find_object" output="screen" respawn="true">
+      <remap from="~input_cloud" to="$(arg input_cloud)"/>
+
+    <rosparam subst_value="true">
+      object_size: $(arg object_size)
+      plane_normal: $(arg plane_normal)
+      use_plane_normal: $(arg use_plane_normal)
+     </rosparam>
+    </node>
+  </group>
+</launch>
