@@ -1,18 +1,39 @@
 <launch>
   <arg name="input_cloud" default="/camera/depth/points" />
+  <arg name="output_pose" default="~object_pose" />
+  <arg name="output_box" default="~bounding_box" />
+  <arg name="output_cloud" default="~object_cloud" />
 
-  <arg name="object_size" default="0.3" />
+  <arg name="object_size_min" default="0.02" />
+  <arg name="object_size_max" default="0.15" />
   <arg name="plane_normal" default="0" />
-  <arg name="use_plane_normal" default="false" />
+  <arg name="use_plane_normal" default="0" />
+
+  <arg name="roi_min_x" default="-0.5" />
+  <arg name="roi_max_x" default=" 0.5" />
+  <arg name="roi_min_y" default="-0.5" />
+  <arg name="roi_max_y" default=" 0.5" />
+  <arg name="roi_min_z" default=" 0.0" />
+  <arg name="roi_max_z" default=" 1.0" />
 
   <group>
     <node pkg="object_detector" name="find_object" type="find_object" output="screen" respawn="true">
       <remap from="~input_cloud" to="$(arg input_cloud)"/>
+      <remap from="~output_pose" to="$(arg output_pose)"/>
+      <remap from="~output_box" to="$(arg output_box)"/>
+      <remap from="~output_cloud" to="$(arg output_cloud)"/>
 
     <rosparam subst_value="true">
-      object_size: $(arg object_size)
+      object_size_min: $(arg object_size_min)
+      object_size_max: $(arg object_size_max)
       plane_normal: $(arg plane_normal)
       use_plane_normal: $(arg use_plane_normal)
+      roi_min_x: $(arg roi_min_x)
+      roi_max_x: $(arg roi_max_x)
+      roi_min_y: $(arg roi_min_y)
+      roi_max_y: $(arg roi_max_y)
+      roi_min_z: $(arg roi_min_z)
+      roi_max_z: $(arg roi_max_z)
      </rosparam>
     </node>
   </group>

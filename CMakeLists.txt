@@ -9,10 +9,9 @@ find_package(catkin REQUIRED COMPONENTS
     std_msgs
     sensor_msgs
     geometry_msgs
-    cv_bridge
     image_transport
     tf
-    dynamic_reconfigure
+    eigen_conversions
     )
 find_package(OpenCV REQUIRED)
 
@@ -30,6 +29,7 @@ catkin_package(
         geometry_msgs
         message_runtime
         tf
+	eigen_conversions
 )
 
 link_directories(${PCL_LIBRARY_DIRS})
