@@ -53,6 +53,7 @@ bool use_plane_normal_threshold_;
 float roi_min_x_, roi_max_x_;
 float roi_min_y_, roi_max_y_;
 float roi_min_z_, roi_max_z_;
+float euclidean_cluster_tolerance_;
 
 typedef pcl::PointXYZ PCLPoint;
 typedef pcl::PointCloud<PCLPoint> PointCloud;
@@ -139,7 +140,7 @@ void objectSegmentation(const PointCloudPtr input_cloud, PointCloudPtr& object_c
   tree->setInputCloud (object_candidate);
   std::vector<pcl::PointIndices> cluster_inds_vector;
   pcl::EuclideanClusterExtraction<PCLPoint> ec;
-  ec.setClusterTolerance (0.01); // 1cm
+  ec.setClusterTolerance (euclidean_cluster_tolerance_);
   ec.setMinClusterSize (object_cloud_point_thresh_);
   ec.setMaxClusterSize (50000);
   ec.setSearchMethod (tree);
@@ -179,7 +180,12 @@ void bboxPublisher(PointCloudPtr object_cloud, std_msgs::Header header){
   lines.type = visualization_msgs::Marker::LINE_LIST;
   lines.action = visualization_msgs::Marker::ADD;
   lines.id = 1;
+  lines.scale.x = 0.01;
+  lines.scale.y = 0.01;
   lines.color.a = 1;
+  lines.color.r = 1.0f;
+  lines.color.g = 1.0f;
+  lines.color.b = 1.0f;
   lines.lifetime = ros::Duration(0.01);
   lines.points.clear();
 
@@ -211,6 +217,8 @@ void bboxPublisher(PointCloudPtr object_cloud, std_msgs::Header header){
   line_list.markers.push_back(lines);
 
   bbox_pub.publish(line_list);
+
+  return;
 }
 
 
@@ -235,7 +243,7 @@ void posePublisher(Eigen::Vector3f p, Eigen::Quaternionf q, std_msgs::Header hea
 
 void msgCallback(const sensor_msgs::PointCloud2ConstPtr& pcd){
 
-    pcl::ScopeTime t("imgCallback");
+    pcl::ScopeTime t("msgCallback");
 
     PointCloudPtr read_cloud (new PointCloud);
     pcl::fromROSMsg(*pcd, *read_cloud);
@@ -271,7 +279,7 @@ void msgCallback(const sensor_msgs::PointCloud2ConstPtr& pcd){
       ROS_ERROR("Object cloud is empty");
       return;
     }
-    
+
     //publish object pointcloud
     PointCloudPtr output_cloud = object_cloud;
     output_cloud->header = read_cloud->header;
@@ -313,11 +321,13 @@ int main (int argc, char** argv){
     priv_nh.param("roi_max_y", roi_max_y_, float(0.5));
     priv_nh.param("roi_min_z", roi_min_z_, float(0.0));
     priv_nh.param("roi_max_z", roi_max_z_, float(1.5));
+    priv_nh.param("cluster_tolerance", euclidean_cluster_tolerance_, float(0.05));
+
     ros::Subscriber sub = priv_nh.subscribe("input_cloud", 1, msgCallback);
 
-    pose_pub = priv_nh.advertise<geometry_msgs::PoseStamped>("output_pose",1000);
-    bbox_pub = priv_nh.advertise<visualization_msgs::MarkerArray>("output_box", 1000);
-    cloud_pub = priv_nh.advertise<sensor_msgs::PointCloud2>("output_cloud", 1000);
+    pose_pub = priv_nh.advertise<geometry_msgs::PoseStamped>("output_pose",1);
+    bbox_pub = priv_nh.advertise<visualization_msgs::MarkerArray>("output_box", 1);
+    cloud_pub = priv_nh.advertise<sensor_msgs::PointCloud2>("output_cloud", 1);
 
     ros::spin();
 

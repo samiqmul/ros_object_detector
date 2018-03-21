@@ -16,6 +16,8 @@
   <arg name="roi_min_z" default=" 0.0" />
   <arg name="roi_max_z" default=" 1.0" />
 
+  <arg name="cluster_tolerance" default="0.1" />
+
   <group>
     <node pkg="object_detector" name="find_object" type="find_object" output="screen" respawn="true">
       <remap from="~input_cloud" to="$(arg input_cloud)"/>
@@ -34,6 +36,7 @@
       roi_max_y: $(arg roi_max_y)
       roi_min_z: $(arg roi_min_z)
       roi_max_z: $(arg roi_max_z)
+      cluster_tolerance: $(arg cluster_tolerance)
      </rosparam>
     </node>
   </group>
