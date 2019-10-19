@@ -1,20 +1,55 @@
 <launch>
-  <arg name="input_cloud" default="/camera/depth/points" />
+  <arg name="input_cloud" default="/kinect2/qhd/points" />
+  <!-- <arg name="input_cloud" default="/kinect2/sd/points" /> -->
+
+  <!-- <arg name="input_cloud" default="/d/controloutput_cloud" /> -->
   <arg name="output_pose" default="~object_pose" />
   <arg name="output_box" default="~bounding_box" />
   <arg name="output_cloud" default="~object_cloud" />
+  <arg name="midbox_box" default="~mid_box" />
+  <arg name="minpoint_box" default="~minpoint_box" />
+  <arg name="cropoutput_box" default="~cropbox_box" />
+  <arg name="cropoutput_cloud" default="~cropobject_cloud" />
+  <arg name="midbox_eastbox" default="~midbox_eastbox" />
+  <arg name="output_eastbox" default="~output_eastbox" />
+  <arg name="midbox_westbox" default="~midbox_westbox" />
+  <arg name="output_westbox" default="~output_westbox" />
 
-  <arg name="object_size_min" default="0.02" />
-  <arg name="object_size_max" default="0.15" />
+  <!-- <arg name="boxpoints_box" default="~boxpoints_box" /> -->
+
+
+  <arg name="object_size_min" default="0.03" />
+  <arg name="object_size_max" default="1.5" />
   <arg name="plane_normal" default="0" />
   <arg name="use_plane_normal" default="0" />
 
-  <arg name="roi_min_x" default="-0.5" />
-  <arg name="roi_max_x" default=" 0.5" />
-  <arg name="roi_min_y" default="-0.5" />
-  <arg name="roi_max_y" default=" 0.5" />
-  <arg name="roi_min_z" default=" 0.0" />
-  <arg name="roi_max_z" default=" 1.0" />
+<!-- FUll Table -->
+
+<!--
+  <arg name="roi_min_x" default="-0.35" />
+  <arg name="roi_max_x" default="0.18 " />
+  <arg name="roi_min_y" default="-0.18" />
+  <arg name="roi_max_y" default=" 0.21" />
+  <arg name="roi_min_z" default=" 0.45" />
+   <arg name="roi_max_z" default=" 0.724" /> -->
+
+ <!-- Left HALF Table  -->
+
+  <!-- <arg name="roi_min_x" default="-0.0" />
+  <arg name="roi_max_x" default="0.16 " />
+  <arg name="roi_min_y" default="-0.15" />
+  <arg name="roi_max_y" default=" 0.16" />
+  <arg name="roi_min_z" default=" 0.45" />
+  <arg name="roi_max_z" default=" 0.721" /> -->
+
+  <!-- Right HALF Table  -->
+
+   <arg name="roi_min_x" default="-0.35" />
+   <arg name="roi_max_x" default=" -0.09 " />
+   <arg name="roi_min_y" default="-0.15" />
+   <arg name="roi_max_y" default=" 0.16" />
+   <arg name="roi_min_z" default=" 0.45" />
+   <arg name="roi_max_z" default=" 0.7103" />
 
   <arg name="cluster_tolerance" default="0.1" />
 
@@ -24,6 +59,17 @@
       <remap from="~output_pose" to="$(arg output_pose)"/>
       <remap from="~output_box" to="$(arg output_box)"/>
       <remap from="~output_cloud" to="$(arg output_cloud)"/>
+      <remap from="~midbox_box" to="$(arg midbox_box)"/>
+      <remap from="~minpoint_box" to="$(arg minpoint_box)"/>
+      <remap from="~cropoutput_box" to="$(arg cropoutput_box)"/>
+      <remap from="~cropoutput_cloud" to="$(arg cropoutput_cloud)"/>
+      <remap from="~midbox_eastbox" to="$(arg midbox_eastbox)"/>
+      <remap from="~output_eastbox" to="$(arg output_eastbox)"/>
+      <remap from="~midbox_westbox" to="$(arg midbox_westbox)"/>
+      <remap from="~output_westbox" to="$(arg output_westbox)"/>
+
+      <!-- <remap from="~boxpoints_box" to="$(arg boxpoints_box)"/> -->
+
 
     <rosparam subst_value="true">
       object_size_min: $(arg object_size_min)
