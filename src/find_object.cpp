@@ -38,6 +38,8 @@
 
 #include <pcl/filters/radius_outlier_removal.h>
 
+//#check atom
+
 using namespace std;
 
 visualization_msgs::MarkerArray line_list;
