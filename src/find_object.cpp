@@ -72,6 +72,12 @@ typedef pcl::PointXYZ PCLPoint; //A point structure representing Euclidean xyz c
 typedef pcl::PointCloud<PCLPoint> PointCloud;  //typedef pcl::PointCloud <PointT >::ConstPtr
 typedef PointCloud::Ptr PointCloudPtr;
 
+
+typedef pcl::PointXYZRGB PCLPointRGB; //A point structure representing Euclidean xyz coordinates.
+typedef pcl::PointCloud<PCLPointRGB> PointCloudRGB;  //typedef pcl::PointCloud <PointT >::ConstPtr
+typedef PointCloudRGB::Ptr PointCloudPtrRGB;
+
+
  //SOR filter  It computes first the average distance of each point to its neighbors (considering k nearest neighbors for each - k is the first parameter). Then it rejects the points that are farther than the average distance plus a number of times the standard deviation (second parameter).
 void SORfilter(const PointCloudPtr input, PointCloudPtr output) {
   pcl::StatisticalOutlierRemoval<PCLPoint> sor;
@@ -595,8 +601,35 @@ void msgCallback(const sensor_msgs::PointCloud2ConstPtr& pcd){     //sensor mess
     Eigen::Vector4f minPoint (roi_min_x_, roi_min_y_, roi_min_z_,0);   //region of interest in real world (m)
     Eigen::Vector4f maxPoint (roi_max_x_, roi_max_y_, roi_max_z_, 0);   //convert from an Eigen::Vector4f to a point type such pcl::PointXYZ
     // Eigen::Vector3f rotationPoint (-2.8797933, 0, 2.8797933);
-
    std::cerr << "Input PointCloud : " << read_cloud->points.size()<<std::endl;
+
+
+///////////START RGB CROP/////////////////////
+
+
+   PointCloudPtrRGB read_cloudRGB  (new PointCloudRGB);
+    pcl::fromROSMsg(*pcd, *read_cloudRGB);  //conversion of point cloud
+
+  PointCloudPtrRGB crop_cloudRGB (new PointCloudRGB);
+  //
+   pcl::CropBox<PCLPointRGB> cropFilterRGB;  //CropBox is a filter that allows the user to filter all the data inside of a given box.
+   cropFilterRGB.setMin(minPoint);
+   cropFilterRGB.setMax(maxPoint);
+      cropFilterRGB.setTranslation(Eigen::Vector3f( 0,0 ,0));
+     Eigen::Vector3f rotationPointRGB ( 0.0719, 0, 0 ); //ADDED Later
+
+   cropFilterRGB.setRotation(rotationPointRGB);
+   cropFilterRGB.setInputCloud(read_cloudRGB);
+   cropFilterRGB.filter(*crop_cloudRGB);
+
+
+   sensor_msgs::PointCloud2 pub_msgRGB;
+   pcl::toROSMsg(*crop_cloudRGB,pub_msgRGB);
+   cloud_pub.publish(pub_msgRGB);
+  // //
+
+////////////END RGB CROP//////////////////////////////////////////////////////////////////////
+
 
 
 
@@ -661,9 +694,9 @@ void msgCallback(const sensor_msgs::PointCloud2ConstPtr& pcd){     //sensor mess
     output_cloud->header = read_cloud->header;
 
 
-    sensor_msgs::PointCloud2 pub_msg;
-    pcl::toROSMsg(*output_cloud,pub_msg);
-    cloud_pub.publish(pub_msg);
+    // sensor_msgs::PointCloud2 pub_msg;
+    // pcl::toROSMsg(*output_cloud,pub_msg);
+    // cloud_pub.publish(pub_msg);
     // std::cerr << "object_cloud Published: " << object_cloud->points.size()<<std::endl;
 
     Eigen::Vector4f centroid;
