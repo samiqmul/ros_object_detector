@@ -1,0 +1,8 @@
+prefix=/home/mustafar/catkin_ws/install
+
+Name: object_detector
+Description: Description of object_detector
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/mustafar/catkin_ws/install/lib 
+Requires: roscpp std_msgs sensor_msgs geometry_msgs message_runtime tf eigen_conversions
